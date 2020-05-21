@@ -3,22 +3,22 @@ const app = express();
 const bodyParser = require("body-parser");
 const Post = require("./models/post");
 
-const postRoutes = require("./routes/posts");
-const userRoutes = require("./routes/user");
-const path = require("path");
+//const postRoutes = require("./routes/posts");
+//const userRoutes = require("./routes/user");
+//const path = require("path");
 
-//const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-//mongoose
-//.connect(
-//"mongodb+srv://ashok:aDqcEZ3FX3O9iKQe@cluster0-aogye.mongodb.net/test?retryWrites=true&w=majority"
-//)
-//.then(() => {
-//console.log("Connected to database!");
-//})
-//.catch(() => {
-//console.log("Connection failed!");
-//});
+mongoose
+.connect(
+"mongodb+srv://ashok:aDqcEZ3FX3O9iKQe@cluster0-aogye.mongodb.net/test?retryWrites=true&w=majority"
+)
+.then(() => {
+console.log("Connected to database!");
+})
+.catch(() => {
+console.log("Connection failed!");
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -37,28 +37,23 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
-
-  // we still need to send the response as we dont want client be waiting and timeout
-  res.status(201).json({
-    message: "Post added successfully",
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
   });
+  
+  post.save();
+  
+  //.then((createdPost) => {
+    //res.status(201).json({
+      //message: "Post added successfully",
+      //postId: createdPost._id,
+   console.log(post);
+   res.status(201).json({
+      message: "Post added succesfully",
+   });
+
 });
-
-const post = new Post({
-  title: req.body.title,
-  content: req.body.content,
-});
-
-//},
-
-post.save().then((createdPost) => {
-  res.status(201).json({
-    message: "Post added successfully",
-    postId: createdPost._id,
-  });
-});
-
 app.get("/api/posts", (req, res, next) => {
   Post.find().then((documents) => {
     res.status(200).json({
@@ -68,7 +63,7 @@ app.get("/api/posts", (req, res, next) => {
   });
 });
 
-app.put();
+//app.put();
 
 app.delete("/api/posts/:id", (req, res, next) => {
   Post.deleteOne({ _id: req.params.id }).then((result) => {
