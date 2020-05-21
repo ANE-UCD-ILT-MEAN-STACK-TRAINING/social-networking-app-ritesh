@@ -8,16 +8,20 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class PostsService {
-  
+
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
-  
-  constructor(private http: HttpClient) {}
-  
+
+  constructor(private http: HttpClient) { }
+
+  getPost(id: string) {
+    return { ...this.posts.find(p => p.id === id) };
+  }
+
   getPostUpdateListener() {
     return this.postsUpdated.asObservable();
   }
-  
+
   getPosts() {
     this.http
       .get<{ message: string; posts: any }>(
@@ -25,19 +29,22 @@ export class PostsService {
       )
       .pipe(
         map((postData) => {
-          return postData.posts.map((post) => {})
-            return {
-              title:post.title,
-              content: post.content,
-              id: post. id,
-            };
+          return {
+            posts: postData.posts.map((post) => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post.id,
+              };
+            })
+          }
 
-          })
-          
+        }))
+
       .subscribe((transformedPosts) => {
-        this.posts = transformedPosts;
+        this.posts = transformedPosts.posts;
         this.postsUpdated.next([...this.posts]);
-      }));
+      });
   }
   addPost(title: string, content: string) {
     const post: Post = { id: null, title: title, content: content };
@@ -52,15 +59,15 @@ export class PostsService {
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
       });
-    }
-  deletePost(postId : string) {
+  }
+  deletePost(postId: string) {
     this.http
-    .delete("http://localhost:3000/api/posts/" + postId)
-    .subscribe(() => {
-      console.log("deleted");
-     //const updatedPosts = this.posts.filter((post) => post.id !== postId);
-      //this.posts = updatedPosts;
-     //this.postsUpdated.next([...this.posts]);
-     });
+      .delete("http://localhost:3000/api/posts/" + postId)
+      .subscribe(() => {
+        console.log("deleted");
+        //const updatedPosts = this.posts.filter((post) => post.id !== postId);
+        //this.posts = updatedPosts;
+        //this.postsUpdated.next([...this.posts]);
+      });
   }
 }
