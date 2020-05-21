@@ -9,9 +9,11 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
+
 export class PostCreateComponent implements OnInit {
-  enteredTitle = "";
-  enteredContent = "";
+  
+  //enteredTitle = "";
+  //enteredContent = "";
   post: Post;
   isLoading = false;
   form: FormGroup;
@@ -19,15 +21,7 @@ export class PostCreateComponent implements OnInit {
   private mode = "create";
   private postId: string;
   
-  constructor(
-    public postsService: PostsService, 
-    public route: ActivatedRoute) {}
-
-
-  //ngOnInit(): void {
-    //throw new Error("Method not implemented.");
- // }
-  
+  constructor(public postsService: PostsService, public route: ActivatedRoute) {}
 
 
     ngOnInit(): void {
@@ -35,24 +29,21 @@ export class PostCreateComponent implements OnInit {
       if(paramMap.has('postId')) {
       this.mode = 'edit';
       this.postId = paramMap.get('postId');
-this.isLoading = true; 
-
-
-
-//this.postsService.getPost(this.postId);
-}
-else {
-this.mode = 'create';
-this.postId = null;
-}
-});
-}
-
-  onAddPost(form: NgForm){   
-    if(form.invalid){
-      return;
-    }   
-    this.postsService.addPost(form.value.title, form.value.content);
-    form.resetForm();
+      this.isLoading = true; 
   }
-}
+      else {
+      this.mode = 'create';
+      this.postId = null;
+
+  //   onAddPost(){   
+  //     if(form.invalid){
+  //     return;
+  //       }   
+  //     this.postsService.addPost(form.value.title, form.value.content);
+  //     form.resetForm();
+  // }
+
+
+
+      }
+    })}}
