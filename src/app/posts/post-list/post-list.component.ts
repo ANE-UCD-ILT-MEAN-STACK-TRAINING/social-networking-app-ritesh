@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
-
 import { Post } from '../post.model';
 import { PostsService } from '../post.service';
-import { PageEvent } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-post-list',
@@ -21,31 +21,49 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   constructor(public postsService: PostsService) {}
 
+  //@Input() posts: Post[] = [];
+  private postSubscription : Subscription;
+  /*posts = [
+    {title: 'First Post', content: " This is the first post content"},
+    {title: 'Second Post', content: " This is the Second post content"},
+    {title: 'Third Post', content: " This is the Third post content"}
+  ]*/
+
   ngOnInit() {
     this.isLoading = true;
+    //this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSub = this.postsService
       .getPostUpdateListener()
       .subscribe((posts: Post[]) => {
+        this.isLoading = false;
+       // this.totalPosts = postData.postCount;
         this.posts = posts;
       });
+  }
+
+  onDelete(postId: string) {
+    //this.isLoading = true;
+    this.postsService.deletePost(postId);
+    //.subscribe(() => {
+    //  this.postsService.getPosts(this.postsPerPage, this.currentPage);
+    }
+
+  onChangedPage(pageData: PageEvent) {
+    this.isLoading = true;
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsPerPage = pageData.pageSize;
+   // this.postsService.getPosts(this.postsPerPage, this.currentPage);
   }
 
   ngOnDestroy() {
     this.postsSub.unsubscribe();
   }
-
-  /* onDelete(postId: string) {
-    this.isLoading = true;
-    this.postsService.deletePost(postId).subscribe(() => {
-      this.postsService.getPosts(this.postsPerPage, this.currentPage);
-    });
-  }
-  /*
-  onChangedPage(pageData: PageEvent) {
-    this.isLoading = true;
-    this.currentPage = pageData.pageIndex + 1;
-    this.postsPerPage = pageData.pageSize;
-    this.postsService.getPosts(this.postsPerPage, this.currentPage);
-  }
-*/
 }
+  
+ // onChangedPage(pageData: PageEvent) {
+   // this.isLoading = true;
+   // this.currentPage = pageData.pageIndex + 1;
+    //this.postsPerPage = pageData.pageSize;
+    //this.postsService.getPosts(this.postsPerPage, this.currentPage);
+  
+
